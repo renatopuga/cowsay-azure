@@ -1,9 +1,6 @@
 # cowsay-azure
 Azure Blockchain Service
 
-# cowsay-azure
-
-
 
 ## Documentação 
 
