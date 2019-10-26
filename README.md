@@ -284,7 +284,9 @@ PS /home/renato>
 
 ![state diagram of workflow](https://github.com/Azure-Samples/blockchain/raw/master/blockchain-workbench/application-and-smart-contract-samples/hello-blockchain/media/5aba06dd9b98e017f7031946d0187fb7.png)
 
-## Azure-Samples - Blockchain
+
+
+## Azure-Samples - Hello, Blockchain!
 
 * https://github.com/Azure-Samples/blockchain
 
