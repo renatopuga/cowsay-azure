@@ -18,6 +18,12 @@
 
 * https://pad.riseup.net/p/fiapblock-2019-10
 
+* https://docs.microsoft.com/en-us/azure/blockchain/workbench/deploy
+
+* https://101blockchains.com/azure-blockchain/
+
+  
+
 ## Introdução
 
 Fonte: https://101blockchains.com/azure-blockchain/
@@ -65,6 +71,8 @@ A visualização do Azure Blockchain Workbench é uma coleção de serviços e r
                 ||----w |
                 ||     ||
 ```
+
+
 
 ### Basic Settings 
 
