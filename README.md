@@ -13,6 +13,12 @@
 
 
 
+## Print: Renato --> Luciano
+
+![https://github.com/renatopuga/cowsay-azure/raw/master/print-valendo-pontos.png](https://github.com/renatopuga/cowsay-azure/raw/master/print-valendo-pontos.png)
+
+
+
 
 ## Documentação 
 
