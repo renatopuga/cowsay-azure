@@ -133,3 +133,385 @@ A visualização do Azure Blockchain Workbench é uma coleção de serviços e r
 ```
 
 NOTA: **A implantação pode levar até 90 minutos.**  Maiores informações, acesse: https://docs.microsoft.com/en-us/azure/blockchain/workbench/deploy
+
+
+
+## Azure Cloud Shell
+
+1. Portal
+2. Resource groups
+3. Filtrar por: App Services
+4. Copiar URL e colocar no Chrome
+   1. Launch Bash (escolha ao gosto do cliente Bash ou PowerSheel)
+
+```bash
+ ________________________________________ 
+< Agora, vamos no Azure Active Directory >
+ ---------------------------------------- 
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+
+
+## Azure Active Directory
+
+1. Portal
+
+2. Azure Active Directory
+
+3. App registrations (se não tiver o seu na lista, vamos criar um novo)
+
+4. New Registration an application
+
+   1. Name: puga-fiap-asia-api
+
+   2. Support account types
+
+      1. Who can use this application or access this API?
+
+         (x) Accounts in this organizational directory only (Fiap-Faculdade de Informática e Administração Paulista only - Single tenant)
+
+5. Clicar em **Registrar**
+
+
+
+## Api Permissions 
+
+1. Dentro da Api criada clique em **Api Permissions**.
+
+2. Add a permissions
+
+3. Microsoft Graph
+
+4. Delegated permissions
+
+5. Select permissions: user
+
+   (x) User.Read.All
+
+   
+
+## GUID Generator
+
+* https://guidgenerator.com/online-guid-generator.aspx
+
+  d0b89f8a-d88e-4028-a7e3-bf97bb7ff543
+
+## App Roles
+
+* Adicionar na linha 8:
+
+```bash
+"appRoles": [
+     {
+       "allowedMemberTypes": [
+         "User",
+         "Application"
+       ],
+       "displayName": "Administrator",
+       "id": "<GUID>",
+       "isEnabled": true,
+       "description": "Blockchain Workbench administrator role allows creation of applications, user to role assignments, etc.",
+       "value": "Administrator"
+     }
+   ],
+```
+
+* Alterar a linha 19 **Oauth2AllowImplicitFlow** de `false`para `true`:
+
+Subscription ID: d1aa1416-3251-4a6c-94b0-2bc5b3b85267
+
+
+
+**Step 1. Launch Cloud Shell and run the following command**:
+
+```bash
+cd; Invoke-WebRequest -Uri https://aka.ms/workbenchAADSetupScript -OutFile workbenchAADSetupScript.ps1; ./workbenchAADSetupScript.ps1 -SubscriptionID d1aa1416-3251-4a6c-94b0-2bc5b3b85267 -ResourceGroupName pugafiapasiarg -DeploymentId a66efz
+```
+
+
+
+### Azure Cloud Shell
+
+```bash
+Type "az" to use Azure CLI
+Type "help" to learn about Cloud Shell
+
+
+MOTD: Modules installed with 'Install-Module' are persisted across sessions
+
+VERBOSE: Authenticating to Azure ...
+VERBOSE: Building your Azure drive ...
+Azure:/
+PS Azure:\> ls
+clouddrive  workbenchAADSetupScript.ps1
+Azure:/
+PS Azure:\> cd; Invoke-WebRequest -Uri https://aka.ms/workbenchAADSetupScript -OutFile workbenchAADSetupScript.ps1; ./workbenchAADSetupScript.ps1 -SubscriptionID d1aa1416-3251-4a6c-94b0-2bc5b3b85267 -ResourceGroupName pugafiapasiarg -DeploymentId a66efz
+Please enter the Azure Active Directory tenant you would like to use (Go to https://aka.ms/workbenchFAQ for more info): fiap.com.brWARNING: To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code AHBXVLYX2 to authenticate.INFO: Creating the AAD application
+INFO: Successfully created AAD application with appId: 6f832aee-bdc0-44df-ad00-1ad23e48fd9f
+INFO: Creating the Service Principal for Azure Blockchain Workbench
+INFO: Adding current service principal as an admin
+INFO: Successfully created role assignment
+INFO: Looking for your user 'RM333257@fiap.com.br' in 'fiap.com.br' tenant
+INFO: 1 user(s) were found with email 'RM333257@fiap.com.br'
+INFO: Assign the current logged in user to be the owner of the Application.
+INFO: Added 'RM333257@fiap.com.br' as an admin on the application
+INFO: Updating your Workbench Instance with the Active Directory Application Info. This may take some time...
+INFO: Attempting to update the reply URl to https://pugafiapasia-a66efz.azurewebsites.net
+INFO: Waiting for changes to propagate...
+
+INFO: Azure Active Directory Domain Name: fiap.com.br
+INFO: Application Name: Azure Blockchain Workbench pugafiapasia-a66efz
+INFO: Application Client Id: 6f832aee-bdc0-44df-ad00-1ad23e48fd9f
+
+
+
+SUCCESS: Your Workbench instance was successfully provisioned. Navigate to https://pugafiapasia-a66efz.azurewebsites.net to use your instance.
+INFO: Please refer to https://aka.ms/workbenchFAQ to read more about user management in Workbench.
+============================================================================================================================
+PS /home/renato>
+```
+
+
+
+## Azure Cloud Sheell
+
+* Abrir: https://pugafiapasia-a66efz.azurewebsites.net
+
+
+
+## Azure-Samples - Blockchain
+
+* https://github.com/Azure-Samples/blockchain
+
+1. New
+2. Upload: HelloBlockchain.json
+3. Upload: HelloBlockchain.sol
+4. Add a member (Adicionar dois membors com seu RM da fiap)
+   1. Requester
+   2. Responder
+5. New
+6. New Contract: 
+   1. Request Message [ Enviando Mesangem]
+7. Your contract was created successfully.
+
+
+
+### HelloBlockchain.sol
+
+```bash
+pragma solidity >=0.4.25 <0.6.0;
+
+contract HelloBlockchain
+{
+     //Set of States
+    enum StateType { Request, Respond}
+
+    //List of properties
+    StateType public  State;
+    address public  Requestor;
+    address public  Responder;
+
+    string public RequestMessage;
+    string public ResponseMessage;
+
+    // constructor function
+    constructor(string memory message) public
+    {
+        Requestor = msg.sender;
+        RequestMessage = message;
+        State = StateType.Request;
+    }
+
+    // call this function to send a request
+    function SendRequest(string memory requestMessage) public
+    {
+        if (Requestor != msg.sender)
+        {
+            revert();
+        }
+
+        RequestMessage = requestMessage;
+        State = StateType.Request;
+    }
+
+    // call this function to send a response
+    function SendResponse(string memory responseMessage) public
+    {
+        Responder = msg.sender;
+
+        // call ContractUpdated() to record this action
+        ResponseMessage = responseMessage;
+        State = StateType.Respond;
+    }
+}
+```
+
+### HelloBlockchain.json
+
+```json
+{
+  "ApplicationName": "HelloBlockchain",
+  "DisplayName": "Hello, Blockchain!",
+  "Description": "A simple application to send request and get response",
+  "ApplicationRoles": [
+    {
+      "Name": "Requestor",
+      "Description": "A person sending a request."
+    },
+    {
+      "Name": "Responder",
+      "Description": "A person responding to a request"
+    }
+  ],
+  "Workflows": [
+    {
+      "Name": "HelloBlockchain",
+      "DisplayName": "Request Response",
+      "Description": "A simple workflow to send a request and receive a response.",
+      "Initiators": [ "Requestor" ],
+      "StartState": "Request",
+      "Properties": [
+        {
+          "Name": "State",
+          "DisplayName": "State",
+          "Description": "Holds the state of the contract.",
+          "Type": {
+            "Name": "state"
+          }
+        },
+        {
+          "Name": "Requestor",
+          "DisplayName": "Requestor",
+          "Description": "A person sending a request.",
+          "Type": {
+            "Name": "Requestor"
+          }
+        },
+        {
+          "Name": "Responder",
+          "DisplayName": "Responder",
+          "Description": "A person sending a response.",
+          "Type": {
+            "Name": "Responder"
+          }
+        },
+        {
+          "Name": "RequestMessage",
+          "DisplayName": "Request Message",
+          "Description": "A request message.",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "ResponseMessage",
+          "DisplayName": "Response Message",
+          "Description": "A response message.",
+          "Type": {
+            "Name": "string"
+          }
+        }
+      ],
+      "Constructor": {
+        "Parameters": [
+          {
+            "Name": "message",
+            "Description": "...",
+            "DisplayName": "Request Message",
+            "Type": {
+              "Name": "string"
+            }
+          }
+        ]
+      },
+      "Functions": [
+        {
+          "Name": "SendRequest",
+          "DisplayName": "Request",
+          "Description": "...",
+          "Parameters": [
+            {
+              "Name": "requestMessage",
+              "Description": "...",
+              "DisplayName": "Request Message",
+              "Type": {
+                "Name": "string"
+              }
+            }
+          ]
+        },
+        {
+          "Name": "SendResponse",
+          "DisplayName": "Response",
+          "Description": "...",
+          "Parameters": [
+            {
+              "Name": "responseMessage",
+              "Description": "...",
+              "DisplayName": "Response Message",
+              "Type": {
+                "Name": "string"
+              }
+            }
+          ]
+        }
+      ],
+      "States": [
+        {
+          "Name": "Request",
+          "DisplayName": "Request",
+          "Description": "...",
+          "PercentComplete": 50,
+          "Value": 0,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": ["Responder"],
+              "AllowedInstanceRoles": [],
+              "Description": "...",
+              "Function": "SendResponse",
+              "NextStates": [ "Respond" ],
+              "DisplayName": "Send Response"
+            }
+          ]
+        },
+        {
+          "Name": "Respond",
+          "DisplayName": "Respond",
+          "Description": "...",
+          "PercentComplete": 90,
+          "Value": 1,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": ["Requestor"],
+              "Description": "...",
+              "Function": "SendRequest",
+              "NextStates": [ "Request" ],
+              "DisplayName": "Send Request"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+
+```
+
+
+
+## Contrato Feito
+
+1. Clique no seu contrato
+2. Take action
+3. REQUEST MESSAGE
+   1. RESPONSE MESSAGE: Tudo bem?
+   2. Request Message: Tudo!
+
